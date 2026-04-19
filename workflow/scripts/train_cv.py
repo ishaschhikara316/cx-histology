@@ -184,7 +184,10 @@ def main(manifest, labels, out_dir, encoder, models_config, params_config,
     models_cfg = yaml.safe_load(open(models_config))
     params = yaml.safe_load(open(params_config))
     m = pd.read_csv(manifest, sep="\t").set_index("patient")
-    lab = pd.read_csv(labels, sep="\t").set_index("patient")[CX_COLUMNS]
+    lab_raw = pd.read_csv(labels, sep="\t")
+    # Labels may be indexed by "patient" or "bcr_patient_barcode"; accept either.
+    idx_col = "bcr_patient_barcode" if "bcr_patient_barcode" in lab_raw.columns else "patient"
+    lab = lab_raw.set_index(idx_col)[CX_COLUMNS]
     cfg = TrainConfig(
         embed_dim=models_cfg["encoders"][encoder]["embed_dim"],
         hidden=hidden, dropout=dropout, lr=lr,
