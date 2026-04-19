@@ -1,9 +1,9 @@
-"""WSI ingest — manifest, download, tile extraction.
+"""WSI ingest — manifest + streaming download-tile-delete loop.
 
-Glob pattern note: TCGA slide filenames are not deterministic from the
-patient barcode (the UUID suffix is assigned by GDC). We therefore
-snakemake-glob the downloaded .svs files after the download rule
-completes and fan out tiling per discovered slide.
+TCGA is streamed: one slide at a time is downloaded, tiled, and the raw
+.svs is deleted, so peak disk footprint is bounded by a single slide
+plus accumulated .h5 outputs. This makes ingest viable on modest disks
+(~95 GB) that couldn't hold the whole raw cohort at once.
 """
 
 rule gdc_manifest:
@@ -18,62 +18,35 @@ rule gdc_manifest:
         "2> {log}"
 
 
-rule download_wsi:
+rule stream_ingest_cancer:
+    """Download-tile-delete loop for one TCGA cancer type.
+
+    Output is just a completion marker; per-slide .h5 files are
+    discovered downstream (embed.smk) by globbing the tiles directory.
+    Resumes by skipping slides whose .h5 already exists.
+    """
     input:
         manifest = INTERIM / "manifests" / "tcga_{cancer}.tsv"
     output:
-        marker = touch(RAW / "tcga" / "{cancer}" / ".download_complete")
+        marker = INTERIM / "tiles" / "tcga" / "{cancer}" / ".ingest_complete"
     log:
-        "logs/download_wsi_{cancer}.log"
-    threads: 4
+        "logs/stream_ingest_{cancer}.log"
+    params:
+        ref = "resources/stain_reference.png"
     shell:
-        # No --token: TCGA diagnostic slides are open-access.
-        "python workflow/scripts/download_wsi.py "
+        "python workflow/scripts/stream_ingest.py "
         "--manifest {input.manifest} "
-        "--out-dir {RAW}/tcga/{wildcards.cancer} "
-        "--processes {threads} "
-        "2> {log}"
-
-
-def _slide_targets(wildcards):
-    """After download, list expected tile HDF5 outputs by scanning raw dir."""
-    import glob
-    raw = RAW / "tcga" / wildcards.cancer
-    svs = glob.glob(str(raw / "**/*.svs"), recursive=True)
-    return [INTERIM / "tiles" / "tcga" / wildcards.cancer /
-            f"{Path(p).stem}.h5" for p in svs]
-
-
-rule tile_wsi:
-    input:
-        slide = RAW / "tcga" / "{cancer}" / "{slide_dir}" / "{slide}.svs",
-        ref   = "resources/stain_reference.png"
-    output:
-        h5 = INTERIM / "tiles" / "tcga" / "{cancer}" / "{slide}.h5"
-    log:
-        "logs/tile_{cancer}_{slide}.log"
-    resources:
-        mem_mb = 4000
-    shell:
-        "python workflow/scripts/tile_wsi.py "
-        "--slide {input.slide} "
-        "--out {output.h5} "
+        "--raw-dir {RAW}/tcga/{wildcards.cancer} "
+        "--tiles-dir {INTERIM}/tiles/tcga/{wildcards.cancer} "
+        "--stain-reference {params.ref} "
         "--patch-px {config[tile][patch_size_px]} "
         "--mpp-target {config[tile][mpp_target]} "
         "--tissue-fraction-min {config[tile][tissue_fraction_min]} "
         "--tiles-per-slide {config[tile][tiles_per_slide]} "
         "--laplacian-var-min {config[tile][laplacian_var_min]} "
-        "--stain-reference {input.ref} "
         "--seed {config[reproducibility][random_seed]} "
+        "--marker {output.marker} "
         "2> {log}"
-
-
-rule ingest_cancer:
-    """Per-cancer-type ingest: download + tile."""
-    input:
-        _slide_targets
-    output:
-        marker = touch(INTERIM / "tiles" / "tcga" / "{cancer}" / ".ingest_complete")
 
 
 rule ingest_all:

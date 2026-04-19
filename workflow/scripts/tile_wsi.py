@@ -99,12 +99,19 @@ def _macenko_normalize(rgb: np.ndarray, reference: np.ndarray | None) -> np.ndar
         return rgb
     from torch_staintools.normalizer import NormalizerBuilder
     import torch
-    norm = NormalizerBuilder.build("macenko", concentration_method="ls")
-    ref_t = torch.from_numpy(reference).permute(2, 0, 1).unsqueeze(0).float()
-    norm.fit(ref_t)
-    src = torch.from_numpy(rgb).permute(2, 0, 1).unsqueeze(0).float()
-    out = norm.transform(src)[0].permute(1, 2, 0).clamp(0, 255).byte().numpy()
-    return out
+    try:
+        norm = NormalizerBuilder.build("macenko", concentration_solver="ls")
+        ref_t = torch.from_numpy(np.ascontiguousarray(reference)).permute(
+            2, 0, 1).unsqueeze(0).float()
+        norm.fit(ref_t)
+        src = torch.from_numpy(np.ascontiguousarray(rgb)).permute(
+            2, 0, 1).unsqueeze(0).float()
+        out = norm.transform(src)[0].permute(1, 2, 0).clamp(0, 255).byte().numpy()
+        return out
+    except Exception:
+        # Reference unfittable (e.g. empty tissue mask) or transform error:
+        # fall back to the un-normalised tile rather than aborting the slide.
+        return rgb
 
 
 def write_tiles_hdf5(path, out, *, patch_px, mpp_target,
