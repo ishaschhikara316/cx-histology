@@ -1,0 +1,49 @@
+name: cx-histology
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - snakemake-minimal=8.*
+  # Core scientific
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - statsmodels
+  - matplotlib
+  - seaborn
+  - pyyaml
+  - click
+  - tqdm
+  - pytest
+  # Imaging / histology
+  - openslide
+  - openslide-python
+  - pyvips
+  - scikit-image
+  - opencv
+  - pillow
+  # Deep learning (CUDA 12.x wheels via pytorch channel)
+  - pytorch=2.*
+  - torchvision
+  - pytorch-cuda=12.1
+  # R for CX recomputation on CPTAC (not TCGA — labels reused)
+  - r-base>=4.4
+  - r-optparse
+  - r-data.table
+  - r-remotes
+  - bioconductor-biobase
+  - bioconductor-summarizedexperiment
+  - pip:
+      - timm>=1.0
+      - transformers>=4.40
+      - huggingface_hub
+      - torch-staintools
+      - lifelines
+      - einops
+      - h5py
