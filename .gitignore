@@ -1,0 +1,29 @@
+# Data
+data/
+results/
+*.svs
+*.tiff
+*.h5
+*.pt
+*.ckpt
+*.npy
+*.npz
+
+# Tokens and secrets
+.gdc_token
+.hf_token
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Snakemake
+.snakemake/
+logs/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
