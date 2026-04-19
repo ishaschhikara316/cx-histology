@@ -9,8 +9,15 @@ Stage targets:
     snakemake --cores 2  figures_all      # Phase 6 — figures + dashboard
     snakemake --cores 8  all              # everything
 """
+import os
 from pathlib import Path
 import yaml
+
+# Make `from workflow.scripts import ...` work in shell-invoked scripts.
+# Set env once at the Snakemake process level; child shells inherit it.
+_ROOT = str(Path(".").resolve())
+os.environ["PYTHONPATH"] = _ROOT + (":" + os.environ["PYTHONPATH"]
+                                    if os.environ.get("PYTHONPATH") else "")
 
 configfile: "config/params.yaml"
 
