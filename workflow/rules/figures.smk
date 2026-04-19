@@ -65,6 +65,17 @@ rule dashboard:
         "--prototypes-dir {input.prototypes} --out {output.html}"
 
 
+rule fig5:
+    input:
+        preds    = RESULTS / "hugo_2016" / "uni" / "predictions.tsv",
+        clinical = COHORTS["hugo_2016"]["response_table"]
+    output:
+        pdf = FIGURES / "fig5_hugo.pdf"
+    shell:
+        "python workflow/scripts/fig5_hugo.py "
+        "--preds {input.preds} --clinical {input.clinical} --out {output.pdf}"
+
+
 rule figures_all:
     input:
         FIGURES / "fig1_pipeline.pdf",
