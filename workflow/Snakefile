@@ -1,0 +1,45 @@
+"""cx-histology pipeline entry point.
+
+Stage targets:
+    snakemake --cores 8  ingest_all       # Phase 1 — WSI download + tiles
+    snakemake --cores 8  embed_all        # Phase 2 — FM embeddings
+    snakemake --cores 1  train_all        # Phase 3 — 5-fold CV ABMIL
+    snakemake --cores 4  predict_cptac    # Phase 4 — external validation
+    snakemake --cores 4  interpret_all    # Phase 5 — attention + enrichment
+    snakemake --cores 2  figures_all      # Phase 6 — figures + dashboard
+    snakemake --cores 8  all              # everything
+"""
+from pathlib import Path
+import yaml
+
+configfile: "config/params.yaml"
+
+with open("config/cohorts.yaml") as f:
+    COHORTS = yaml.safe_load(f)
+with open("config/models.yaml") as f:
+    MODELS = yaml.safe_load(f)
+
+RAW      = Path(config["paths"]["raw"])
+INTERIM  = Path(config["paths"]["interim"])
+RESULTS  = Path(config["paths"]["results"])
+FIGURES  = Path(config["paths"]["figures"])
+
+ENCODERS      = list(MODELS["encoders"].keys())      # [uni, h_optimus_0]
+CANCER_TYPES  = COHORTS["tcga"]["cancer_types"]
+CPTAC_COHORTS = COHORTS["cptac"]["cohorts"]
+
+include: "rules/wsi_ingest.smk"
+include: "rules/embed.smk"
+include: "rules/train.smk"
+include: "rules/predict.smk"
+include: "rules/interpret.smk"
+include: "rules/figures.smk"
+
+
+rule all:
+    input:
+        FIGURES / "fig1_pipeline.pdf",
+        FIGURES / "fig2_benchmark.pdf",
+        FIGURES / "fig3_external.pdf",
+        FIGURES / "fig4_interpret.pdf",
+        FIGURES / "dashboard.html",
