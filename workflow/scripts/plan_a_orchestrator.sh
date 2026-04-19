@@ -11,7 +11,8 @@
 # All output goes to logs/plan_a_<stage>.log. Safe to re-run — each stage
 # checks for its own output before doing work.
 
-set -u  # no -e: we want to continue past stage failures
+# No -u or -e: conda activation scripts reference unset vars; we also
+# want to continue past stage failures rather than aborting the chain.
 
 ROOT="/root/Project/Isha/cx-histology"
 cd "$ROOT"
