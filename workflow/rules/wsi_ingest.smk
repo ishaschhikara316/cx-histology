@@ -27,10 +27,10 @@ rule download_wsi:
         "logs/download_wsi_{cancer}.log"
     threads: 4
     shell:
+        # No --token: TCGA diagnostic slides are open-access.
         "python workflow/scripts/download_wsi.py "
         "--manifest {input.manifest} "
         "--out-dir {RAW}/tcga/{wildcards.cancer} "
-        "--token ~/.gdc_token "
         "--processes {threads} "
         "2> {log}"
 

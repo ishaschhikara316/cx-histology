@@ -33,9 +33,12 @@ def gdc_manifest_format(df: pd.DataFrame) -> str:
 @click.command()
 @click.option("--manifest", required=True, type=click.Path(exists=True))
 @click.option("--out-dir", required=True, type=click.Path())
-@click.option("--token", required=True, type=click.Path(exists=True))
+@click.option("--token", default=None,
+              type=click.Path(exists=True, dir_okay=False),
+              help="Optional — only required for controlled-access files. "
+                   "TCGA diagnostic slides are open-access.")
 @click.option("--processes", default=4, type=int)
-def main(manifest: str, out_dir: str, token: str, processes: int) -> None:
+def main(manifest: str, out_dir: str, token: str | None, processes: int) -> None:
     df = pd.read_csv(manifest, sep="\t")
     gdc_txt = gdc_manifest_format(df)
     gdc_mf = Path(out_dir) / "_gdc_manifest.txt"
@@ -45,8 +48,9 @@ def main(manifest: str, out_dir: str, token: str, processes: int) -> None:
     cmd = ["gdc-client", "download",
            "-m", str(gdc_mf),
            "-d", out_dir,
-           "-t", token,
            "-n", str(processes)]
+    if token:
+        cmd += ["-t", token]
     print(" ".join(cmd), file=sys.stderr)
     subprocess.run(cmd, check=True)
 
