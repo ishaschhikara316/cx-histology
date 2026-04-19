@@ -1,0 +1,31 @@
+# Foundation-model registry.
+encoders:
+  uni:
+    hf_repo: "MahmoodLab/UNI"
+    hf_revision: "main"
+    arch: "vit_large_patch16_224"
+    embed_dim: 1024
+    input_px: 224
+    mean: [0.485, 0.456, 0.406]
+    std:  [0.229, 0.224, 0.225]
+    requires_gated_access: true
+  h_optimus_0:
+    hf_repo: "bioptimus/H-optimus-0"
+    hf_revision: "main"
+    arch: "vit_giant_patch14_224"
+    embed_dim: 1536
+    input_px: 224
+    mean: [0.707223, 0.578729, 0.703617]
+    std:  [0.211883, 0.230117, 0.177517]
+    requires_gated_access: false
+
+abmil:
+  attention_hidden: [128, 256, 512]     # swept
+  dropout: [0.2, 0.3, 0.5]              # swept
+  lr: [1.0e-4, 5.0e-4]                  # swept
+  weight_decay: 1.0e-5
+  batch_size_slides: 8
+  n_epochs: 40
+  early_stop_patience: 6
+  n_cx: 17
+  hidden_trunk: 512

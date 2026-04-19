@@ -1,0 +1,34 @@
+paths:
+  raw: "data/raw"
+  interim: "data/interim"
+  results: "results"
+  figures: "figures"
+
+tile:
+  mpp_target: 0.5               # 20x
+  patch_size_px: 256
+  tissue_fraction_min: 0.5
+  laplacian_var_min: 100.0
+  tiles_per_slide: 1000
+  stain_reference: "resources/stain_reference.png"
+
+cv:
+  n_folds: 5
+  stratify_by: "cancer_type"
+  holdout_fraction: 0.20
+  seed: 20260419
+
+labels:
+  n_signatures: 17
+  transform: "log1p_zscore"     # applied per fold train split
+
+eval:
+  primary_metric: spearman
+  secondary_metrics: [mae, pearson, r2]
+  target_rho: 0.30              # H1 pass threshold (half of signatures)
+  external_drop_tolerance: 0.15 # H2 ceiling on ρ(TCGA) − ρ(CPTAC)
+
+reproducibility:
+  random_seed: 20260419
+  torch_deterministic: true
+  cudnn_benchmark: false

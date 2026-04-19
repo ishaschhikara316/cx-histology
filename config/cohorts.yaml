@@ -1,0 +1,29 @@
+# Cohort registry — consumed by Snakefile and scripts.
+tcga:
+  slide_source: gdc
+  gdc_filter:
+    files.data_type: "Slide Image"
+    files.experimental_strategy: "Diagnostic Slide"
+    files.data_format: "SVS"
+  labels: "../cin-ici-mediation/results/tcga/cx_activities.tsv"
+  patient_id_col: "bcr_patient_barcode"
+  cancer_types: [ACC, BLCA, BRCA, CESC, CHOL, COAD, DLBC, ESCA, GBM, HNSC,
+                 KICH, KIRC, KIRP, LAML, LGG, LIHC, LUAD, LUSC, MESO, OV,
+                 PAAD, PCPG, PRAD, READ, SARC, SKCM, STAD, TGCT, THCA,
+                 THYM, UCEC, UCS, UVM]
+
+cptac:
+  slide_source: tcia_pdc
+  cohorts: [BRCA, LUAD, OV, COAD, GBM]
+  labels_out: "results/cptac/cx_activities.tsv"
+  absolute_seg_urls:
+    BRCA: "https://pdc.cancer.gov/pdc/api/v2/..."   # filled at ingest time
+    LUAD: "https://pdc.cancer.gov/pdc/api/v2/..."
+    OV:   "https://pdc.cancer.gov/pdc/api/v2/..."
+    COAD: "https://pdc.cancer.gov/pdc/api/v2/..."
+    GBM:  "https://pdc.cancer.gov/pdc/api/v2/..."
+
+hugo_2016:                     # stretch / optional Phase 7
+  slide_source: local
+  slide_dir: "data/raw/hugo_2016/slides"
+  response_table: "../cin-ici-mediation/data/interim/hugo_2016/clinical.tsv"
