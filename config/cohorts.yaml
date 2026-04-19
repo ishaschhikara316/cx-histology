@@ -5,7 +5,7 @@ tcga:
     files.data_type: "Slide Image"
     files.experimental_strategy: "Diagnostic Slide"
     files.data_format: "SVS"
-  labels: "../cin-ici-mediation/results/tcga/cx_activities.tsv"
+  labels: "data/labels/cx_activities.tsv"
   patient_id_col: "bcr_patient_barcode"
   cancer_types: [ACC, BLCA, BRCA, CESC, CHOL, COAD, DLBC, ESCA, GBM, HNSC,
                  KICH, KIRC, KIRP, LAML, LGG, LIHC, LUAD, LUSC, MESO, OV,
