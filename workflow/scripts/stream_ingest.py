@@ -45,8 +45,10 @@ def _log(msg: str) -> None:
     print(msg, file=sys.stderr, flush=True)
 
 
-def _download_one(file_id: str, raw_dir: Path, *, token: Path | None) -> Path:
-    cmd = ["gdc-client", "download", file_id, "-d", str(raw_dir), "-n", "1"]
+def _download_one(file_id: str, raw_dir: Path, *, token: Path | None,
+                  gdc_processes: int = 4) -> Path:
+    cmd = ["gdc-client", "download", file_id, "-d", str(raw_dir),
+           "-n", str(gdc_processes)]
     if token is not None:
         cmd += ["-t", str(token)]
     subprocess.run(cmd, check=True)
@@ -94,10 +96,13 @@ def _save_reference_from_h5(h5_path: Path, ref_path: Path) -> None:
               type=click.Path(exists=True))
 @click.option("--embed-batch-size", default=32, type=int)
 @click.option("--embed-device", default="cuda:0")
+@click.option("--gdc-processes", default=4, type=int,
+              help="Parallel chunks per file for gdc-client -n.")
 def main(manifest, raw_dir, tiles_dir, stain_reference, token,
          patch_px, mpp_target, tissue_fraction_min, tiles_per_slide,
          laplacian_var_min, seed, marker,
-         embed_encoder, embed_dir, models_config, embed_batch_size, embed_device):
+         embed_encoder, embed_dir, models_config, embed_batch_size, embed_device,
+         gdc_processes):
     import torch
 
     raw = Path(raw_dir);     raw.mkdir(parents=True, exist_ok=True)
@@ -136,7 +141,8 @@ def main(manifest, raw_dir, tiles_dir, stain_reference, token,
         _log(f"[{i + 1}/{len(df)}] {stem}  ({int(row['file_size']) / 1e6:.0f} MB)")
         try:
             svs = _download_one(row["file_id"], raw,
-                                token=Path(token) if token else None)
+                                token=Path(token) if token else None,
+                                gdc_processes=gdc_processes)
         except Exception as e:
             _log(f"  download failed: {e}")
             n_fail += 1

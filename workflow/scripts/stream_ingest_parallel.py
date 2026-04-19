@@ -47,12 +47,13 @@ import pandas as pd
 @click.option("--tiles-per-slide", default=1000, type=int)
 @click.option("--laplacian-var-min", default=100.0, type=float)
 @click.option("--embed-batch-size", default=32, type=int)
+@click.option("--gdc-processes", default=4, type=int)
 @click.option("--seed", default=20260419, type=int)
 @click.option("--marker", default=None, type=click.Path())
 def main(manifest, raw_dir, tiles_dir, embed_dir, embed_encoder,
          stain_reference, n_workers, models_config,
          patch_px, mpp_target, tissue_fraction_min, tiles_per_slide,
-         laplacian_var_min, embed_batch_size, seed, marker):
+         laplacian_var_min, embed_batch_size, gdc_processes, seed, marker):
     df = pd.read_csv(manifest, sep="\t")
 
     shards_dir = Path(manifest).parent / "_shards" / Path(manifest).stem
@@ -85,6 +86,7 @@ def main(manifest, raw_dir, tiles_dir, embed_dir, embed_encoder,
             "--stain-reference", stain_reference,
             "--models-config", models_config,
             "--embed-batch-size", str(embed_batch_size),
+            "--gdc-processes", str(gdc_processes),
             "--patch-px", str(patch_px),
             "--mpp-target", str(mpp_target),
             "--tissue-fraction-min", str(tissue_fraction_min),
