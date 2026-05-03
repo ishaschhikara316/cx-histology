@@ -17,12 +17,18 @@ class MultiTaskHuber(nn.Module):
         self.delta = delta
         self.register_parameter("task_scale",
                                 nn.Parameter(torch.ones(n_out), requires_grad=False))
+        self.register_buffer("active_mask", torch.ones(n_out))
+
+    def set_active_mask(self, mask: torch.Tensor) -> None:
+        self.active_mask = mask.to(self.active_mask.device).float()
 
     def forward(self, pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
         per = torch.nn.functional.huber_loss(pred, target, delta=self.delta,
                                              reduction="none")
         per = per / self.task_scale.clamp_min(1e-6)
-        return per.mean()
+        per = per * self.active_mask
+        denom = self.active_mask.sum().clamp_min(1.0) * pred.shape[0]
+        return per.sum() / denom
 
 
 def fit_label_transform(y: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
