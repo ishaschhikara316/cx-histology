@@ -14,12 +14,16 @@
 # No -u or -e: conda activation scripts reference unset vars; we also
 # want to continue past stage failures rather than aborting the chain.
 
-ROOT="/root/Project/Isha/cx-histology"
+ROOT="/root/Isha/cx-histology"
 cd "$ROOT"
 
-source /root/miniconda3/etc/profile.d/conda.sh
-conda activate cx-histology
-export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
+# Use system Python with pip-installed torch (conda env not available in
+# this checkpoint environment). Stages requiring openslide/pyvips/gdc-client
+# (CPTAC ingest, STAD/COAD ingest) will fail gracefully and skip.
+if [ -f /root/miniconda3/etc/profile.d/conda.sh ]; then
+  source /root/miniconda3/etc/profile.d/conda.sh
+  conda activate cx-histology 2>/dev/null || true
+fi
 export PYTHONPATH="$PWD:${PYTHONPATH:-}"
 
 mkdir -p logs results figures
@@ -52,23 +56,75 @@ HP_SWEEP_DIR="results/cv/uni_7cohort_sweep"
 mkdir -p "$HP_SWEEP_DIR"
 
 # Coarse sweep: 6 combos (3 hidden × 2 lr), dropout fixed at 0.3 for speed.
+# Parallelised across the 4 visible GPUs — keep N_GPUS jobs in flight.
+N_GPUS=$(nvidia-smi -L 2>/dev/null | wc -l)
+if [ "$N_GPUS" -lt 1 ]; then N_GPUS=1; fi
+log "  HP sweep over $N_GPUS GPU(s)"
+
+# Build the queue
+QUEUE=()
 for HIDDEN in 128 256 512; do
   for LR in 0.0001 0.0005; do
-    out="$HP_SWEEP_DIR/h${HIDDEN}_d0.3_lr${LR}"
-    if [ -f "$out/cv_summary.json" ]; then
-      log "  skip h=${HIDDEN} lr=${LR} (done)"
+    QUEUE+=("$HIDDEN $LR")
+  done
+done
+
+# Slot-based parallel runner
+declare -A SLOT_PID SLOT_TAG
+launch() {
+  local slot=$1 hidden=$2 lr=$3
+  local out="$HP_SWEEP_DIR/h${hidden}_d0.3_lr${lr}"
+  if [ -f "$out/cv_summary.json" ]; then
+    log "  skip h=${hidden} lr=${lr} (done)"
+    SLOT_PID[$slot]=""
+    return
+  fi
+  mkdir -p "$out"
+  log "  [gpu$slot] start h=${hidden} d=0.3 lr=${lr}"
+  CUDA_VISIBLE_DEVICES=$slot OMP_NUM_THREADS=8 MKL_NUM_THREADS=8 python workflow/scripts/train_cv.py \
+    --manifest data/interim/manifests/train_uni_7cohort.tsv \
+    --labels data/labels/cx_activities.tsv \
+    --out-dir "$out" \
+    --encoder uni \
+    --hidden "$hidden" --dropout 0.3 --lr "$lr" \
+    --device cuda:0 \
+    > "logs/plan_a_train_h${hidden}_lr${lr}.log" 2>&1 &
+  SLOT_PID[$slot]=$!
+  SLOT_TAG[$slot]="h${hidden}_lr${lr}"
+}
+
+# Initial fill
+SLOT=0
+while [ $SLOT -lt $N_GPUS ] && [ ${#QUEUE[@]} -gt 0 ]; do
+  hp="${QUEUE[0]}"; QUEUE=("${QUEUE[@]:1}")
+  read -r H L <<< "$hp"
+  launch $SLOT $H $L
+  SLOT=$((SLOT+1))
+done
+
+# Drain: as a slot finishes, start next from queue
+while true; do
+  any_running=0
+  for s in $(seq 0 $((N_GPUS-1))); do
+    pid=${SLOT_PID[$s]:-}
+    if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+      any_running=1
       continue
     fi
-    log "  train h=${HIDDEN} d=0.3 lr=${LR}"
-    mkdir -p "$out"
-    python workflow/scripts/train_cv.py \
-      --manifest data/interim/manifests/train_uni_7cohort.tsv \
-      --labels data/labels/cx_activities.tsv \
-      --out-dir "$out" \
-      --encoder uni \
-      --hidden "$HIDDEN" --dropout 0.3 --lr "$LR" \
-      > "logs/plan_a_train_h${HIDDEN}_lr${LR}.log" 2>&1
+    if [ -n "$pid" ]; then
+      wait "$pid" 2>/dev/null
+      log "  [gpu$s] done ${SLOT_TAG[$s]}"
+      SLOT_PID[$s]=""
+    fi
+    if [ ${#QUEUE[@]} -gt 0 ]; then
+      hp="${QUEUE[0]}"; QUEUE=("${QUEUE[@]:1}")
+      read -r H L <<< "$hp"
+      launch $s $H $L
+      any_running=1
+    fi
   done
+  [ $any_running -eq 0 ] && break
+  sleep 5
 done
 
 # Pick best HP by mean ρ over well-defined signatures.
@@ -129,46 +185,11 @@ PY
 log "stage 2 done (figures/prelim_7cohort_rho.{pdf,png})"
 
 # ----------------------------------------------------------------------
-# Stage 3: CPTAC-BRCA smoke test
+# Stage 3 + 4: SKIPPED (handled by parallel_ingest_8cohort.sh externally
+# with much higher parallelism). STAD and COAD will be re-ingested by
+# that launcher, which also handles 6 additional cohorts.
 # ----------------------------------------------------------------------
-log "stage 3: CPTAC-BRCA ingest (TCIA REST — untested path)"
-
-if [ ! -f data/interim/embeddings/cptac/uni/BRCA/.done ]; then
-  # First, do the TCIA manifest + download in a single call via ingest_cptac.py
-  # then pipe those slides through stream ingest. The existing TCIA path
-  # doesn't use gdc-client, so we run ingest_cptac.py to pull .zip files,
-  # then unpack and stream-tile them.
-  mkdir -p data/raw/cptac/BRCA data/interim/embeddings/cptac/uni/BRCA
-  python workflow/scripts/ingest_cptac.py \
-    --cohort CPTAC-BRCA \
-    --out-dir data/raw/cptac/BRCA \
-    > logs/plan_a_cptac_brca_manifest.log 2>&1 \
-    && log "  CPTAC-BRCA manifest + download succeeded" \
-    || log "  CPTAC-BRCA ingest FAILED — see logs/plan_a_cptac_brca_manifest.log; skipping stage"
-fi
-
-# Note: CPTAC path is known-untested. If it fails, we skip cleanly and
-# continue with stages 4-5. Don't waste time debugging TCIA here;
-# bubble up a failure marker instead.
-if [ -f data/raw/cptac/BRCA/_manifest.tsv ]; then
-  log "  CPTAC-BRCA: $(wc -l < data/raw/cptac/BRCA/_manifest.tsv) series listed"
-fi
-
-# ----------------------------------------------------------------------
-# Stage 4: second TCGA batch — STAD + COAD
-# ----------------------------------------------------------------------
-log "stage 4: batch 2 — STAD + COAD"
-
-python workflow/scripts/stream_ingest_batch.py \
-  --cohorts STAD,COAD \
-  --embed-encoder uni \
-  --n-workers 4 --gdc-processes 4 \
-  > logs/plan_a_batch_2.log 2>&1
-
-for c in STAD COAD; do
-  marker="data/interim/embeddings/tcga/uni/$c/.done"
-  if [ -f "$marker" ]; then log "  [$c] done"; else log "  [$c] NOT DONE"; fi
-done
+log "stage 3 + 4: SKIPPED (parallel_ingest_8cohort.sh handles new cohorts)"
 
 # ----------------------------------------------------------------------
 # Stage 5: final retrain + figures on whatever cohorts finished
