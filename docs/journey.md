@@ -194,6 +194,60 @@ Drews CIN signatures slide by slide. If those signatures are
 biologically real (and the Nature paper makes a strong case that they
 are), then having them in pathology workflow space is useful.
 
+## What I learned that I did not expect, the second pass
+
+After the seven cohort run was in, I went deeper on the same data and
+two more findings came out that I want to record before they slip into
+the background.
+
+The first is about statistical power. The five fold cross validation
+gives you a clean fold level estimate of rho per signature, but if you
+try to use it for a frequentist significance test you hit a power
+floor. With only five folds, sign flip permutation has thirty two
+unique outcomes, so the smallest possible two sided p value is about
+0.063. After Benjamini Hochberg adjustment across thirteen active
+signatures, no signature reaches q less than 0.05 even when its mean
+rho is +0.38 with all five folds positive. That is a design limitation,
+not an absence of signal. I rebuilt the test at the patient level
+instead, using the saved fold predictions and bootstrapping ten thousand
+times. With patient level resampling, five signatures cross q less than
+0.001 (CX1, CX3, CX6, CX10, CX12) and nine cross q less than 0.05.
+That is the headline statistical artifact for the project. The forest
+plot in figures/fig_patient_bootstrap_forest.pdf is the figure I would
+include in a paper.
+
+The second is about what the rho actually measures. When I broke the
+predictions out by cancer type, the within cohort rho values are much
+smaller than the pan cohort rho. CHOL gets within cohort mean rho of
++0.122 and a maximum of +0.337; UCS gets +0.037; READ gets close to
+zero. The pan cohort number of +0.219 is partly carried by the model
+predicting cancer type level CIN burden correctly rather than within
+type biology. That is still a useful prediction. Cancer types differ
+in CIN by an order of magnitude and a clinical workflow that needs
+to flag high CIN tumours from H and E benefits from getting the type
+right. But it is a subtler claim than "predict CIN signatures from
+morphology" full stop, and I want to be honest about it in the methods.
+
+Two subgroup findings also came out. Performance improves strongly
+with age. CX1 goes from rho +0.054 in patients under fifty to rho
++0.518 in patients eighty and older; CX3 goes +0.147 to +0.597. Stage
+also matters: CX1 and CX6 are easiest to predict at stage IV. The
+biological reading is that CIN is more pronounced in older patients
+and advanced disease, and the model rides that variance. The
+methodological reading is that the headline number on a balanced age
+distribution would be different from the headline number on an enriched
+late stage distribution. Reporting subgroup numbers honestly is part
+of the deal.
+
+A last calibration finding. The model is rank correct but amplitude
+shrunk. Linear regression of predicted on actual gives slopes between
+0.05 and 0.16 across the q less than 0.001 signatures. Spearman holds
+because it is rank based, but the predicted CX1 of a tetraploid tumour
+will be lower than the actual CX1, and the absolute predicted values
+are not directly usable as activity estimates without post hoc
+isotonic calibration. A reader who wants quartile assignment is fine,
+a reader who wants an absolute number needs the calibration step.
+
 ## What I am running tonight
 
 Right now, eight more cohorts are streaming in: ESCA, CESC, PAAD,

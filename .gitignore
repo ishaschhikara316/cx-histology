@@ -1,5 +1,8 @@
-# Data
-data/
+# Heavy data, transient artifacts
+data/raw/
+data/interim/
+data/labels/*
+!data/labels/.gitkeep
 results/
 *.svs
 *.tiff
@@ -8,6 +11,16 @@ results/
 *.ckpt
 *.npy
 *.npz
+
+# Allow small results back: cv summaries, robustness, predictions, atlases.
+# These are JSON or TSV at <1 MB each and they are the actual headline outputs.
+!results/cv/**/cv_summary.json
+!results/cv/**/robustness.json
+!results/cv/**/patient_bootstrap.json
+!results/cv/**/rho_per_cohort.tsv
+!results/cv/**/predictions.tsv
+!results/cx_label_atlas.json
+!results/
 
 # Tokens and secrets
 .gdc_token
