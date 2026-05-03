@@ -10,6 +10,7 @@ IDC API calls during ingest.
 from __future__ import annotations
 
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import pandas as pd
@@ -17,6 +18,13 @@ from idc_index import IDCClient
 
 ALL_COHORTS = ["luad", "lscc", "ucec", "ccrcc", "brca", "pda", "gbm",
                "cm", "hnscc", "coad", "sar", "ov", "aml"]
+
+
+def _resolve_urls(client, uid):
+    try:
+        return uid, client.get_series_file_URLs(uid)
+    except Exception:
+        return uid, []
 
 
 def main():
@@ -27,19 +35,33 @@ def main():
 
     summary = []
     for cohort in ALL_COHORTS:
+        out = out_dir / f"cptac_idc_{cohort.upper()}.tsv"
+        if out.exists() and out.stat().st_size > 100:
+            print(f"[{cohort.upper()}] skip: {out} already exists")
+            df_existing = pd.read_csv(out, sep="\t")
+            summary.append((cohort.upper(), len(df_existing)))
+            continue
+
         sub = df_idx[(df_idx["collection_id"] == f"cptac_{cohort}") &
                      (df_idx["Modality"] == "SM")]
         if len(sub) == 0:
             print(f"[{cohort}] 0 series, skipping")
             continue
+
+        # Parallel URL resolution: 32-thread pool keeps the local IDC
+        # SQLite happy and lets us finish a 1000-series cohort in ~30 sec.
+        url_map = {}
+        with ThreadPoolExecutor(max_workers=32) as pool:
+            futures = [pool.submit(_resolve_urls, c, uid)
+                       for uid in sub["SeriesInstanceUID"]]
+            for f in as_completed(futures):
+                uid, urls = f.result()
+                url_map[uid] = urls
+
         rows = []
         for _, r in sub.iterrows():
             uid = r["SeriesInstanceUID"]
-            try:
-                urls = c.get_series_file_URLs(uid)
-            except Exception as e:
-                print(f"  WARN: {uid}: {e}", file=sys.stderr)
-                urls = []
+            urls = url_map.get(uid, [])
             rows.append({
                 "patient_id": r["PatientID"],
                 "series_uid": uid,
@@ -48,10 +70,10 @@ def main():
                 "n_files": len(urls),
                 "urls": ";".join(urls),
             })
-        out = out_dir / f"cptac_idc_{cohort.upper()}.tsv"
         pd.DataFrame(rows).to_csv(out, sep="\t", index=False)
         print(f"[{cohort.upper()}] wrote {out}: "
-              f"{len(rows)} series, {sum(r['n_files'] for r in rows)} files")
+              f"{len(rows)} series, {sum(r['n_files'] for r in rows)} files",
+              flush=True)
         summary.append((cohort.upper(), len(rows)))
 
     print("\nSummary:")
