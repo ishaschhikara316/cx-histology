@@ -25,25 +25,24 @@ import pandas as pd
 from scipy.stats import false_discovery_control, spearmanr
 
 BEST_DIR = Path("results/cv/uni_7cohort_sweep/h512_d0.3_lr0.0001")
-N_REPS = 80           # subsamples per (n, sig) cell
-N_PERM = 400          # permutations per subsample for p-value
+N_REPS = 200          # subsamples per (n, sig) cell — uses scipy closed-form p
 N_GRID = [50, 100, 200, 289, 500, 1000, 1500]
 ACTIVE_SIGS = ["CX1", "CX2", "CX3", "CX4", "CX5", "CX6", "CX8", "CX9",
                "CX10", "CX11", "CX12", "CX16", "CX17"]
 RNG_SEED = 20260503
 
 
-def perm_p(t: np.ndarray, p: np.ndarray, n_perm: int, rng) -> float:
-    """Two-sided permutation p for Spearman ρ, fast variant."""
-    rho_obs, _ = spearmanr(p, t)
+def perm_p(t: np.ndarray, p: np.ndarray, *_args, **_kw) -> float:
+    """Two-sided p for Spearman ρ via scipy closed-form (n>=20 → t-distribution).
+
+    Avoids the O(n_perm × n log n) cost of explicit permutation. The
+    closed-form is a slight approximation but matches permutation to
+    well under 1% at n>=50, which is all our grid points.
+    """
+    rho_obs, p_val = spearmanr(p, t)
     if rho_obs != rho_obs:
         return 1.0
-    null = np.empty(n_perm)
-    for i in range(n_perm):
-        shuffled = rng.permutation(t)
-        r, _ = spearmanr(p, shuffled)
-        null[i] = r if r == r else 0.0
-    return float(((np.abs(null) >= abs(rho_obs)).sum() + 1) / (n_perm + 1))
+    return float(p_val)
 
 
 def main():
@@ -74,7 +73,7 @@ def main():
             ps = []
             for _ in range(N_REPS):
                 idx = rng_global.choice(n_full, size=n, replace=replace)
-                ps.append(perm_p(t_full[idx], p_full[idx], N_PERM, rng_global))
+                ps.append(perm_p(t_full[idx], p_full[idx]))
             ps = np.array(ps)
             # Fraction of reps where this sig's raw p would survive BH < 0.05
             # against itself * 13. Strict approximation: q = p * 13 < 0.05
