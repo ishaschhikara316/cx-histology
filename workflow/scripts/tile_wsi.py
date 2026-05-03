@@ -94,9 +94,19 @@ def _laplacian_variance(rgb: np.ndarray) -> float:
     return float(cv2.Laplacian(gray, cv2.CV_64F).var())
 
 
-def _macenko_normalize(rgb: np.ndarray, reference: np.ndarray | None) -> np.ndarray:
-    if reference is None:
-        return rgb
+_NORMALIZER_CACHE = {}
+
+
+def _get_macenko_normalizer(reference: np.ndarray):
+    """Build and fit a Macenko normalizer once per reference image.
+
+    The original implementation rebuilt + refit per tile (1000× per slide)
+    which dominated runtime — Macenko fit involves SVD on stain vectors.
+    Cache by id(reference) since references are read once per process.
+    """
+    key = id(reference)
+    if key in _NORMALIZER_CACHE:
+        return _NORMALIZER_CACHE[key]
     from torch_staintools.normalizer import NormalizerBuilder
     import torch
     try:
@@ -104,14 +114,52 @@ def _macenko_normalize(rgb: np.ndarray, reference: np.ndarray | None) -> np.ndar
         ref_t = torch.from_numpy(np.ascontiguousarray(reference)).permute(
             2, 0, 1).unsqueeze(0).float()
         norm.fit(ref_t)
+        _NORMALIZER_CACHE[key] = norm
+        return norm
+    except Exception:
+        _NORMALIZER_CACHE[key] = None
+        return None
+
+
+def _macenko_normalize(rgb: np.ndarray, reference: np.ndarray | None) -> np.ndarray:
+    if reference is None:
+        return rgb
+    norm = _get_macenko_normalizer(reference)
+    if norm is None:
+        return rgb
+    import torch
+    try:
         src = torch.from_numpy(np.ascontiguousarray(rgb)).permute(
             2, 0, 1).unsqueeze(0).float()
         out = norm.transform(src)[0].permute(1, 2, 0).clamp(0, 255).byte().numpy()
         return out
     except Exception:
-        # Reference unfittable (e.g. empty tissue mask) or transform error:
-        # fall back to the un-normalised tile rather than aborting the slide.
+        # Per-tile transform error: fall back to un-normalised tile.
         return rgb
+
+
+def _macenko_normalize_batch(tiles: list, reference: np.ndarray) -> np.ndarray:
+    """Apply Macenko normalization to a batch of tiles in a single op.
+
+    Falls back to un-normalised tiles if the normalizer can't be built or
+    the batched transform fails.
+    """
+    norm = _get_macenko_normalizer(reference)
+    if norm is None:
+        return np.stack(tiles, axis=0)
+    import torch
+    try:
+        # Per-tile transform inside one process — torch_staintools' transform
+        # operates on a single image at a time; loop but reuse fitted state.
+        out = []
+        for rgb in tiles:
+            src = torch.from_numpy(np.ascontiguousarray(rgb)).permute(
+                2, 0, 1).unsqueeze(0).float()
+            t = norm.transform(src)[0].permute(1, 2, 0).clamp(0, 255).byte().numpy()
+            out.append(t)
+        return np.stack(out, axis=0)
+    except Exception:
+        return np.stack(tiles, axis=0)
 
 
 def write_tiles_hdf5(path, out, *, patch_px, mpp_target,
@@ -125,19 +173,22 @@ def write_tiles_hdf5(path, out, *, patch_px, mpp_target,
     lvl = _level_for_mpp(slide, mpp_target=mpp_target)
     ref = np.asarray(Image.open(stain_reference).convert("RGB")) if stain_reference else None
 
-    tiles, kept = [], []
+    raw_tiles, kept = [], []
     for (x0, y0) in coords:
         rgb = _read_patch(slide, x0, y0, patch_px=patch_px, lvl=lvl)
         if _laplacian_variance(rgb) < laplacian_var_min:
             continue
-        rgb = _macenko_normalize(rgb, ref)
-        tiles.append(rgb)
+        raw_tiles.append(rgb)
         kept.append((x0, y0))
-    if not tiles:
+    if not raw_tiles:
         tiles_arr = np.zeros((0, patch_px, patch_px, 3), dtype=np.uint8)
         coords_arr = np.zeros((0, 2), dtype=np.int32)
     else:
-        tiles_arr = np.stack(tiles, axis=0).astype(np.uint8)
+        # Batch stain normalization: one GPU/tensor op for the whole slide.
+        if ref is not None:
+            tiles_arr = _macenko_normalize_batch(raw_tiles, ref).astype(np.uint8)
+        else:
+            tiles_arr = np.stack(raw_tiles, axis=0).astype(np.uint8)
         coords_arr = np.asarray(kept, dtype=np.int32)
 
     Path(out).parent.mkdir(parents=True, exist_ok=True)

@@ -69,10 +69,22 @@ def main(manifest, raw_dir, tiles_dir, embed_dir, embed_encoder,
     raw = Path(raw_dir); raw.mkdir(parents=True, exist_ok=True)
     log_dir = Path("logs"); log_dir.mkdir(exist_ok=True)
 
+    # If the parent already restricted CUDA_VISIBLE_DEVICES (e.g. via the
+    # outer launcher pinning a cohort to a GPU subset), respect that
+    # restriction when assigning per-worker GPUs. Without this, setting
+    # env["CUDA_VISIBLE_DEVICES"] = str(k) below would refer to PHYSICAL
+    # GPU k rather than the kth GPU of the parent's view.
+    parent_cvd = os.environ.get("CUDA_VISIBLE_DEVICES", "")
+    available_gpus = [g.strip() for g in parent_cvd.split(",") if g.strip()] \
+                     if parent_cvd else None
+
     procs = []
     for k, sp in enumerate(shard_paths):
         env = os.environ.copy()
-        env["CUDA_VISIBLE_DEVICES"] = str(k)
+        if available_gpus:
+            env["CUDA_VISIBLE_DEVICES"] = available_gpus[k % len(available_gpus)]
+        else:
+            env["CUDA_VISIBLE_DEVICES"] = str(k)
         env["PYTHONPATH"] = str(Path(".").resolve()) + ":" + env.get("PYTHONPATH", "")
         worker_raw = raw / f"worker{k}"
         cmd = [
