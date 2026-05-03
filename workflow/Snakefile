@@ -41,6 +41,7 @@ include: "rules/train.smk"
 include: "rules/predict.smk"
 include: "rules/interpret.smk"
 include: "rules/figures.smk"
+include: "rules/analysis.smk"
 
 
 rule all:

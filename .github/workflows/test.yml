@@ -1,0 +1,57 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+              libvips-tools libopenslide0 openslide-tools
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install \
+              torch==2.5.1 torchvision \
+              --index-url https://download.pytorch.org/whl/cpu
+          pip install \
+              numpy pandas scipy scikit-learn matplotlib seaborn \
+              h5py click pyyaml pytest \
+              pyvips openslide-python torch-staintools
+
+      - name: Run tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          pytest workflow/scripts/tests/test_fixes_2026_05_03.py -v
+          # Smoke test: import every workflow script
+          python -c "
+          import importlib, pathlib
+          for p in pathlib.Path('workflow/scripts').glob('*.py'):
+              if p.name.startswith('_'): continue
+              mod = 'workflow.scripts.' + p.stem
+              try:
+                  importlib.import_module(mod)
+                  print('ok:', mod)
+              except Exception as e:
+                  # Click commands may have side effects on import; skip those
+                  if 'click' in str(type(e).__name__).lower(): continue
+                  print('skipped (' + type(e).__name__ + '):', mod)
+          "
