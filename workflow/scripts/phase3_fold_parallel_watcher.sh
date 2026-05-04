@@ -50,11 +50,11 @@ log "launching fold-parallel retrain across 5 GPUs"
 bash workflow/scripts/train_cv_fold_parallel.sh \
   --manifest data/interim/manifests/train_uni_21cohort.tsv \
   --out-dir results/cv/uni_21cohort_final \
-  --hidden 512 --dropout 0.3 --lr 0.0001 \
+  --hidden 512 --dropout 0.1 --lr 0.0001 \
   --gpus "0 1 2 3 4" \
   > logs/phase3_fold_parallel.log 2>&1
 rc=$?
-log "  fold-parallel rc=$rc"
+log "  fold-parallel rc=$rc (HP from 15-cohort sweep winner: h512_d0.1_lr1e-4)"
 
 if [ -f "$GATE21" ]; then
   log "21-cohort retrain complete; building figure + committing"
@@ -91,7 +91,41 @@ PY
   git add results/cv/uni_21cohort_final/cv_summary.json \
           figures/final_21cohort_rho.pdf figures/final_21cohort_rho.png \
           data/interim/manifests/train_uni_21cohort.tsv 2>>"$LOG"
-  git commit -m "results: 21-cohort fold-parallel retrain (h512_d0.3_lr1e-4)" 2>>"$LOG" || true
+  git commit -m "results: 21-cohort fold-parallel retrain (h512_d0.1_lr1e-4)" 2>>"$LOG" || true
+  git push origin main 2>>"$LOG" || true
+
+  # ----------------------------------------------------------------------
+  # Post-retrain auto-stages: analysis + interpretability + HF + dashboard
+  # ----------------------------------------------------------------------
+  log "stage post-A: comprehensive 21-cohort analysis"
+  PYTHONPATH=/root/ISHA/cx-histology python workflow/scripts/analyze_21cohort.py \
+    > logs/analyze_21cohort.log 2>&1
+  log "  analyze_21cohort rc=$?"
+
+  log "stage post-B: interpretability (attention rollout, prototype tiles, nuclear features)"
+  bash workflow/scripts/interpret_21cohort.sh > logs/_interpret_21_outer.log 2>&1
+  log "  interpret rc=$?"
+
+  log "stage post-C: build dashboard_21cohort.html"
+  PYTHONPATH=/root/ISHA/cx-histology python workflow/scripts/build_dashboard_21cohort.py \
+    > logs/dashboard_21cohort.log 2>&1
+  log "  dashboard rc=$?"
+
+  log "stage post-D: push 21-cohort HF repo"
+  bash workflow/scripts/push_hf_21cohort.sh > logs/push_hf_21cohort.log 2>&1
+  log "  HF push rc=$?"
+
+  log "stage post-E: regenerate manuscript_draft.md from results"
+  PYTHONPATH=/root/ISHA/cx-histology python workflow/scripts/generate_manuscript_draft.py \
+    > logs/generate_manuscript.log 2>&1
+  log "  manuscript rc=$?"
+
+  log "stage post-F: commit + push everything"
+  git add results/cv/uni_21cohort_final/ \
+          figures/final_21cohort_rho.* figures/dashboard_21cohort.html \
+          figures/fig_*_21cohort.* figures/interpret_21cohort/ \
+          docs/manuscript_draft.md 2>>"$LOG" || true
+  git commit -m "results: 21-cohort full preprint package (analysis + interp + HF + dashboard + manuscript)" 2>>"$LOG" || true
   git push origin main 2>>"$LOG" || true
 fi
-log "phase3 watcher done"
+log "=== phase3 watcher complete (full preprint package landed) ==="
