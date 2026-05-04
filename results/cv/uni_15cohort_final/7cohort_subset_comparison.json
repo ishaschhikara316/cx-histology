@@ -1,0 +1,133 @@
+{
+  "subset_cohorts": [
+    "CHOL",
+    "DLBC",
+    "KICH",
+    "MESO",
+    "READ",
+    "UCS",
+    "UVM"
+  ],
+  "n_subset_patients": 289,
+  "rows": [
+    {
+      "sig": "CX1",
+      "rho_15on7subset": 0.21047508252794017,
+      "status": "ok",
+      "rho_7cohort_native": 0.3662247377649267,
+      "delta": -0.15574965523698653
+    },
+    {
+      "sig": "CX2",
+      "rho_15on7subset": 0.13456803764567252,
+      "status": "ok",
+      "rho_7cohort_native": 0.19286527247399624,
+      "delta": -0.05829723482832372
+    },
+    {
+      "sig": "CX3",
+      "rho_15on7subset": 0.23148673087619195,
+      "status": "ok",
+      "rho_7cohort_native": 0.3844381350669207,
+      "delta": -0.15295140419072875
+    },
+    {
+      "sig": "CX4",
+      "rho_15on7subset": -0.05626949127580483,
+      "status": "ok",
+      "rho_7cohort_native": 0.1705419372103127,
+      "delta": -0.22681142848611752
+    },
+    {
+      "sig": "CX5",
+      "rho_15on7subset": 0.07523591132083089,
+      "status": "ok",
+      "rho_7cohort_native": 0.1891684059924767,
+      "delta": -0.1139324946716458
+    },
+    {
+      "sig": "CX6",
+      "rho_15on7subset": 0.20371024223317236,
+      "status": "ok",
+      "rho_7cohort_native": 0.2710708888509189,
+      "delta": -0.06736064661774654
+    },
+    {
+      "sig": "CX7",
+      "rho_15on7subset": NaN,
+      "status": "inactive",
+      "rho_7cohort_native": NaN,
+      "delta": NaN
+    },
+    {
+      "sig": "CX8",
+      "rho_15on7subset": -0.0523671059581718,
+      "status": "ok",
+      "rho_7cohort_native": 0.08667439446467697,
+      "delta": -0.13904150042284877
+    },
+    {
+      "sig": "CX9",
+      "rho_15on7subset": 0.013869668903109651,
+      "status": "ok",
+      "rho_7cohort_native": 0.12546489877369502,
+      "delta": -0.11159522987058537
+    },
+    {
+      "sig": "CX10",
+      "rho_15on7subset": 0.12364588500986365,
+      "status": "ok",
+      "rho_7cohort_native": 0.23574320304012047,
+      "delta": -0.11209731803025683
+    },
+    {
+      "sig": "CX11",
+      "rho_15on7subset": 0.07583884286994608,
+      "status": "ok",
+      "rho_7cohort_native": 0.11225698725985914,
+      "delta": -0.03641814438991306
+    },
+    {
+      "sig": "CX12",
+      "rho_15on7subset": 0.22204281414461277,
+      "status": "ok",
+      "rho_7cohort_native": 0.3591415284669471,
+      "delta": -0.1370987143223343
+    },
+    {
+      "sig": "CX13",
+      "rho_15on7subset": 0.009008536884662513,
+      "status": "ok",
+      "rho_7cohort_native": NaN,
+      "delta": NaN
+    },
+    {
+      "sig": "CX14",
+      "rho_15on7subset": NaN,
+      "status": "inactive",
+      "rho_7cohort_native": NaN,
+      "delta": NaN
+    },
+    {
+      "sig": "CX15",
+      "rho_15on7subset": NaN,
+      "status": "inactive",
+      "rho_7cohort_native": NaN,
+      "delta": NaN
+    },
+    {
+      "sig": "CX16",
+      "rho_15on7subset": 0.013325196408390446,
+      "status": "ok",
+      "rho_7cohort_native": 0.14905970453069312,
+      "delta": -0.13573450812230267
+    },
+    {
+      "sig": "CX17",
+      "rho_15on7subset": -0.06715469933509306,
+      "status": "ok",
+      "rho_7cohort_native": 0.2051524620363657,
+      "delta": -0.2723071613714588
+    }
+  ]
+}
