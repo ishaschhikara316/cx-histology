@@ -41,6 +41,11 @@ REPO = Path(__file__).resolve().parents[2]
 SLIDE_DIR = Path("/tmp/cx_attention_svs")
 SLIDE_DIR.mkdir(parents=True, exist_ok=True)
 
+# Cache thumbnails as PNG so the figure can be re-rendered (different
+# layout, colormap, blur) without re-downloading 3 GB of SVS files.
+THUMB_CACHE = REPO / "figures/wsi_thumbnails"
+THUMB_CACHE.mkdir(parents=True, exist_ok=True)
+
 UUIDS_TSV = "/tmp/slide_uuids.tsv"  # produced earlier
 INDEX_TSV = REPO / "figures/interpret_21cohort/index.tsv"
 OUT_PNG = REPO / "figures/fig4_interpret_attention.png"
@@ -111,62 +116,90 @@ def main() -> int:
     idx = pd.read_csv(INDEX_TSV, sep="\t")
     print(f"slides: {len(uuids)}  rollout entries: {len(idx)}")
 
-    # 1) parallel download (skip if already present)
-    paths: dict[str, Path] = {}
-    print("downloading SVS files (this is the slow step)...")
-    with ThreadPoolExecutor(max_workers=4) as ex:
-        futs = {ex.submit(download_one, r.file_id,
-                          SLIDE_DIR / r.filename): r.patient
-                for r in uuids.itertuples()}
-        for fut in as_completed(futs):
-            patient = futs[fut]
-            try:
-                paths[patient] = fut.result()
-                size_mb = paths[patient].stat().st_size // (1024*1024)
-                print(f"  {patient}: {size_mb} MB")
-            except Exception as e:
-                print(f"  {patient}: FAIL {e}")
-
-    if len(paths) < len(uuids):
-        print("ERROR: not all slides downloaded")
-        return 1
-
-    # 2) extract thumbnails
-    print("extracting thumbnails...")
+    # 1) Use cached thumbnails when present; only download SVS for any
+    # patient whose thumbnail is missing.
     thumbs: dict[str, np.ndarray] = {}
+    need_dl: list[tuple[str, str, str]] = []  # (patient, file_id, filename)
     for r in uuids.itertuples():
-        thumbs[r.patient] = thumbnail_rgb(paths[r.patient])
-        print(f"  {r.patient}: {thumbs[r.patient].shape}")
+        cache_path = THUMB_CACHE / f"{r.patient}_thumb.png"
+        if cache_path.exists():
+            thumbs[r.patient] = np.asarray(
+                Image.open(cache_path).convert("RGB"))
+            print(f"  {r.patient}: cached {thumbs[r.patient].shape}")
+        else:
+            need_dl.append((r.patient, r.file_id, r.filename))
 
-    # 3) Build the figure. The gated-ABMIL head produces a single bag
-    # attention vector that is shared across signatures, so we show one
-    # overlay per slide rather than a misleading "per signature" grid.
+    if need_dl:
+        print(f"downloading {len(need_dl)} SVS files (slow)...")
+        paths: dict[str, Path] = {}
+        with ThreadPoolExecutor(max_workers=4) as ex:
+            futs = {ex.submit(download_one, fid,
+                              SLIDE_DIR / fn): pat
+                    for pat, fid, fn in need_dl}
+            for fut in as_completed(futs):
+                patient = futs[fut]
+                try:
+                    paths[patient] = fut.result()
+                    size_mb = paths[patient].stat().st_size // (1024*1024)
+                    print(f"  {patient}: {size_mb} MB")
+                except Exception as e:
+                    print(f"  {patient}: FAIL {e}")
+                    return 1
+
+        print("extracting and caching thumbnails...")
+        for patient, p in paths.items():
+            t = thumbnail_rgb(p)
+            thumbs[patient] = t
+            cache_path = THUMB_CACHE / f"{patient}_thumb.png"
+            Image.fromarray(t).save(cache_path)
+            print(f"  {patient}: {t.shape}  →  {cache_path}")
+
+    # 3) Build the figure: 2 rows x N patients. Row 0 is the bare
+    # H&E thumbnail (the "before"); row 1 is the same thumbnail with
+    # the bag-attention overlay (the "after"). The two-row layout lets
+    # the reader see exactly which tissue regions the model attended.
+    # The gated-ABMIL head produces a single bag attention vector
+    # shared across signatures, so we show one overlay per slide
+    # rather than a misleading per-signature grid.
     patients_ordered = list(uuids["patient"])
     n_cols = len(patients_ordered)
-    fig, axes = plt.subplots(1, n_cols, figsize=(3.0 * n_cols, 3.4),
+    fig, axes = plt.subplots(2, n_cols, figsize=(3.0 * n_cols, 6.6),
                              squeeze=False)
     for j, p in enumerate(patients_ordered):
         thumb = thumbs[p]
-        ax = axes[0][j]
-        ax.set_xticks([]); ax.set_yticks([])
-        # Pick the first available attention map for this patient
-        # (all sig_idx values produce the same shared bag attention).
+        cohort = uuids.loc[uuids.patient == p, "cohort"].iloc[0]
+        # Row 0: bare H&E
+        ax_top = axes[0][j]
+        ax_top.set_xticks([]); ax_top.set_yticks([])
+        ax_top.imshow(thumb)
+        ax_top.set_title(f"{p[-8:]}  ({cohort})", fontsize=10)
+        # Row 1: with attention overlay
+        ax_bot = axes[1][j]
+        ax_bot.set_xticks([]); ax_bot.set_yticks([])
         rows_p = idx[idx.patient == p]
         if rows_p.empty:
-            ax.imshow(thumb)
+            ax_bot.imshow(thumb)
         else:
             heat_npy = REPO / rows_p.iloc[0]["heatmap"]
             comp = heatmap_overlay(thumb, heat_npy)
-            ax.imshow(comp)
-        cohort = uuids.loc[uuids.patient == p, "cohort"].iloc[0]
-        ax.set_title(f"{p[-8:]}  ({cohort})", fontsize=10)
+            ax_bot.imshow(comp)
+
+    # Row labels (left margin)
+    axes[0][0].set_ylabel("H&E\nthumbnail",
+                          fontsize=11, rotation=0,
+                          ha="right", va="center", labelpad=20)
+    axes[1][0].set_ylabel("attention\noverlay",
+                          fontsize=11, rotation=0,
+                          ha="right", va="center", labelpad=20)
 
     fig.suptitle(
-        "Figure 7. Attention rollout (21-cohort fold0): bag attention "
-        "from the gated ABMIL head, composited over the slide "
-        "thumbnail. High-attention regions cluster on cellular "
-        "tumor tissue rather than stroma or empty background.",
-        fontsize=10, y=1.04, x=0.01, ha="left")
+        "Figure 7. Attention rollout (21-cohort fold0). Top row, "
+        "H&E thumbnail of each test slide. Bottom row, the same "
+        "thumbnail with the gated-ABMIL bag-attention map composited "
+        "over it (turbo colormap, Gaussian-smoothed). High-attention "
+        "regions cluster on cellular tumor tissue, not on stroma or "
+        "empty background.",
+        fontsize=10, y=1.02, x=0.01, ha="left")
     fig.tight_layout()
     fig.savefig(OUT_PNG, dpi=180, bbox_inches="tight")
     print(f"wrote {OUT_PNG}")
