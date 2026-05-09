@@ -389,49 +389,60 @@ required.
 
 ## 6 Figures
 
-**Figure 1.** Cohort coverage and pipeline overview.
-`figures/fig1_cohort_coverage.pdf`. Patient counts per TCGA cohort
-across the 7-, 15-, and 21-cohort training sets; tile-extraction and
-encoder pipeline summary.
+**Figure 1.** Cohort coverage and pipeline overview. Patient counts
+per TCGA cohort across the 7-, 15-, and 21-cohort training sets;
+tile-extraction and encoder pipeline summary.
 
-**Figure 2.** Cohort-scaling decomposition.
-`figures/fig_cohort_scaling.pdf`. (A) Mean active pooled Spearman ρ
-versus training cohort count, with same-patient overlay points
-showing the 21-cohort model re-applied to the 7-cohort and 15-cohort
-patient pools. (B) Per-signature paired bars on the 7-cohort patient
-pool (n = 289) for the top five signatures: 7-cohort native ρ versus
-the 21-cohort model applied to the same 289 patients. CX1, CX3, and
-CX12 cross the H1 threshold (ρ ≥ 0.30) under the 7-cohort model and
-attenuate substantially under the 21-cohort model.
+![](figures/fig1_cohort_coverage.png)
+
+**Figure 2.** Cohort-scaling decomposition. (A) Mean active pooled
+Spearman ρ versus training cohort count, with same-patient overlay
+points showing the 21-cohort model re-applied to the 7-cohort and
+15-cohort patient pools. (B) Per-signature paired bars on the
+7-cohort patient pool (n = 289) for the top five signatures:
+7-cohort native ρ versus the 21-cohort model applied to the same
+289 patients. CX1, CX3, and CX12 cross the H1 threshold
+(ρ ≥ 0.30) under the 7-cohort model and attenuate substantially
+under the 21-cohort model.
+
+![](figures/fig_cohort_scaling.png)
 
 **Figure 3.** Patient-level bootstrap forest plot at the 21-cohort
-scale. `figures/fig_patient_bootstrap_forest.pdf`. Per-signature
-pooled ρ with 95 % CIs from 10,000 patient-resampled bootstraps;
-9 of 14 active signatures pass q_BH < 0.001.
+scale. Per-signature pooled ρ with 95 % CIs from 10,000
+patient-resampled bootstraps; 9 of 14 active signatures pass
+q_BH < 0.001.
 
-**Figure 4.** Calibration top-5.
-`figures/fig_calibration_top5.pdf`. Predicted versus true CX activity
+![](figures/fig_patient_bootstrap_forest.png)
+
+**Figure 4.** Calibration top-5. Predicted versus true CX activity
 for the five strongest signatures at the 21-cohort scale, with
 linear-fit slopes and predicted-range contraction annotated.
 
-**Figure 5.** External validation on CPTAC.
-`figures/fig_cptac_h2.pdf`. (A) Paired ρ_TCGA versus ρ_CPTAC for the
-14 active signatures (n = 283 paired patients), with green lines
-marking signatures that improve on CPTAC. (B) Sorted |Δρ| against
-the pre-registered 0.15 threshold; all 14 active signatures pass.
+![](figures/fig_calibration_top5.png)
 
-**Figure 6.** Survival association.
-`figures/fig_survival_km_cx1.pdf`. Kaplan-Meier curves for predicted
-CX1 quartiles across the 21-cohort population (n = 3,831 with
-overall-survival annotation; cohort-stratified log-rank
+**Figure 5.** External validation on CPTAC. (A) Paired ρ_TCGA
+versus ρ_CPTAC for the 14 active signatures (n = 283 paired
+patients), with green lines marking signatures that improve on
+CPTAC. (B) Sorted |Δρ| against the pre-registered 0.15 threshold;
+all 14 active signatures pass.
+
+![](figures/fig_cptac_h2.png)
+
+**Figure 6.** Survival association. Kaplan-Meier curves for
+predicted CX1 quartiles across the 21-cohort population (n = 3,831
+with overall-survival annotation; cohort-stratified log-rank
 p = 5.4 × 10⁻⁵).
 
-**Figure 7.** Attention rollout (interpretability).
-`figures/fig4_interpret_attention.png`. Five representative slides
-by five top signatures (CX1, CX3, CX5, CX10, CX12) from the fold-0
-checkpoint, colormap heatmaps over the slide canvas. Tile-pixel
-backgrounds were unavailable for this run; the per-slide .npy
-heatmaps and index TSV are in `figures/interpret_21cohort/`.
+![](figures/fig_survival_km_cx1.png)
+
+**Figure 7.** Attention rollout (interpretability). Five
+representative slides by five top signatures (CX1, CX3, CX5, CX10,
+CX12) from the fold-0 checkpoint, colormap heatmaps over the slide
+canvas. Tile-pixel backgrounds were unavailable for this run; the
+per-slide .npy heatmaps and index TSV are in
+`figures/interpret_21cohort/`.
+
+![](figures/fig4_interpret_attention.png)
 
 ---
 
