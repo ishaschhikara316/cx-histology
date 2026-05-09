@@ -1,0 +1,750 @@
+{
+  "cohorts": {
+    "pred_CX1": [
+      {
+        "cohort": "BRCA",
+        "n_mut": 263,
+        "n_wt": 437,
+        "median_mut": 0.5544518828392029,
+        "median_wt": 0.5539774298667908,
+        "delta_median": 0.0004744529724121094,
+        "p_one_sided": 0.83547446822335
+      },
+      {
+        "cohort": "CESC",
+        "n_mut": 16,
+        "n_wt": 204,
+        "median_mut": 0.5592726469039917,
+        "median_wt": 0.5773707330226898,
+        "delta_median": -0.01809808611869812,
+        "p_one_sided": 0.9607918169812576
+      },
+      {
+        "cohort": "CHOL",
+        "n_mut": 3,
+        "n_wt": 29,
+        "median_mut": 0.5930488109588623,
+        "median_wt": 0.5894677042961121,
+        "delta_median": 0.003581106662750244,
+        "p_one_sided": 0.45161290322580644
+      },
+      {
+        "cohort": "COAD",
+        "n_mut": 153,
+        "n_wt": 48,
+        "median_mut": 0.5747543573379517,
+        "median_wt": 0.5738734006881714,
+        "delta_median": 0.0008809566497802734,
+        "p_one_sided": 0.23284245035586226
+      },
+      {
+        "cohort": "DLBC",
+        "n_mut": 5,
+        "n_wt": 26,
+        "median_mut": 0.5649872422218323,
+        "median_wt": 0.5737570524215698,
+        "delta_median": -0.008769810199737549,
+        "p_one_sided": 0.8474377762475649
+      },
+      {
+        "cohort": "ESCA",
+        "n_mut": 117,
+        "n_wt": 16,
+        "median_mut": 0.5561578869819641,
+        "median_wt": 0.5598669946193695,
+        "delta_median": -0.0037091076374053955,
+        "p_one_sided": 0.72053877984856
+      },
+      {
+        "cohort": "GBM",
+        "n_mut": 55,
+        "n_wt": 210,
+        "median_mut": 0.5957935452461243,
+        "median_wt": 0.6040540337562561,
+        "delta_median": -0.008260488510131836,
+        "p_one_sided": 0.7476172470921966
+      },
+      {
+        "cohort": "HNSC",
+        "n_mut": 277,
+        "n_wt": 81,
+        "median_mut": 0.5727134943008423,
+        "median_wt": 0.571849524974823,
+        "delta_median": 0.0008639693260192871,
+        "p_one_sided": 0.5888485464928631
+      },
+      {
+        "cohort": "KICH",
+        "n_mut": 5,
+        "n_wt": 4,
+        "median_mut": 0.551358699798584,
+        "median_wt": 0.5628008246421814,
+        "delta_median": -0.011442124843597412,
+        "p_one_sided": 0.3650793650793651
+      },
+      {
+        "cohort": "KIRP",
+        "n_mut": 2,
+        "n_wt": 64,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "LGG",
+        "n_mut": 136,
+        "n_wt": 108,
+        "median_mut": 0.5877591371536255,
+        "median_wt": 0.5988500118255615,
+        "delta_median": -0.011090874671936035,
+        "p_one_sided": 0.9930309207203805
+      },
+      {
+        "cohort": "LUAD",
+        "n_mut": 222,
+        "n_wt": 170,
+        "median_mut": 0.5678150057792664,
+        "median_wt": 0.5594055354595184,
+        "delta_median": 0.008409470319747925,
+        "p_one_sided": 0.004206391732532753
+      },
+      {
+        "cohort": "LUSC",
+        "n_mut": 369,
+        "n_wt": 73,
+        "median_mut": 0.5744226574897766,
+        "median_wt": 0.5807604193687439,
+        "delta_median": -0.006337761878967285,
+        "p_one_sided": 0.9826523118006466
+      },
+      {
+        "cohort": "MESO",
+        "n_mut": 6,
+        "n_wt": 52,
+        "median_mut": 0.5627781748771667,
+        "median_wt": 0.5723582804203033,
+        "delta_median": -0.009580105543136597,
+        "p_one_sided": 0.7211664193309915
+      },
+      {
+        "cohort": "PAAD",
+        "n_mut": 77,
+        "n_wt": 36,
+        "median_mut": 0.5731522440910339,
+        "median_wt": 0.5701097249984741,
+        "delta_median": 0.0030425190925598145,
+        "p_one_sided": 0.5721251842328372
+      },
+      {
+        "cohort": "PCPG",
+        "n_mut": 0,
+        "n_wt": 83,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "READ",
+        "n_mut": 66,
+        "n_wt": 14,
+        "median_mut": 0.5772813558578491,
+        "median_wt": 0.5780549943447113,
+        "delta_median": -0.0007736384868621826,
+        "p_one_sided": 0.38785982592223456
+      },
+      {
+        "cohort": "STAD",
+        "n_mut": 158,
+        "n_wt": 154,
+        "median_mut": 0.5615329742431641,
+        "median_wt": 0.5667064785957336,
+        "delta_median": -0.00517350435256958,
+        "p_one_sided": 0.7098466424931467
+      },
+      {
+        "cohort": "THYM",
+        "n_mut": 2,
+        "n_wt": 35,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "UCS",
+        "n_mut": 47,
+        "n_wt": 8,
+        "median_mut": 0.5498992204666138,
+        "median_wt": 0.5473310351371765,
+        "delta_median": 0.002568185329437256,
+        "p_one_sided": 0.29075377781260137
+      },
+      {
+        "cohort": "UVM",
+        "n_mut": 0,
+        "n_wt": 24,
+        "skipped": "n<3 in one group"
+      }
+    ],
+    "true_CX1": [
+      {
+        "cohort": "BRCA",
+        "n_mut": 263,
+        "n_wt": 437,
+        "median_mut": 0.374697649739198,
+        "median_wt": 0.655951071728006,
+        "delta_median": -0.28125342198880804,
+        "p_one_sided": 1.0
+      },
+      {
+        "cohort": "CESC",
+        "n_mut": 16,
+        "n_wt": 204,
+        "median_mut": 0.5558445595029671,
+        "median_wt": 0.650865932739399,
+        "delta_median": -0.0950213732364319,
+        "p_one_sided": 0.9181702213856195
+      },
+      {
+        "cohort": "CHOL",
+        "n_mut": 3,
+        "n_wt": 29,
+        "median_mut": 0.64800224614331,
+        "median_wt": 0.633567309931752,
+        "delta_median": 0.014434936211558003,
+        "p_one_sided": 0.4276209677419355
+      },
+      {
+        "cohort": "COAD",
+        "n_mut": 153,
+        "n_wt": 48,
+        "median_mut": 0.709472826169939,
+        "median_wt": 0.7739139480553245,
+        "delta_median": -0.06444112188538553,
+        "p_one_sided": 0.9672310088329673
+      },
+      {
+        "cohort": "DLBC",
+        "n_mut": 5,
+        "n_wt": 26,
+        "median_mut": 0.475479262244136,
+        "median_wt": 0.7280029028323625,
+        "delta_median": -0.25252364058822646,
+        "p_one_sided": 0.9761875334734067
+      },
+      {
+        "cohort": "ESCA",
+        "n_mut": 117,
+        "n_wt": 16,
+        "median_mut": 0.335787774888016,
+        "median_wt": 0.3951918445229245,
+        "delta_median": -0.05940406963490852,
+        "p_one_sided": 0.9429942218567149
+      },
+      {
+        "cohort": "GBM",
+        "n_mut": 55,
+        "n_wt": 210,
+        "median_mut": 0.737315021285422,
+        "median_wt": 0.771196964055926,
+        "delta_median": -0.03388194277050394,
+        "p_one_sided": 0.9947713846872343
+      },
+      {
+        "cohort": "HNSC",
+        "n_mut": 277,
+        "n_wt": 81,
+        "median_mut": 0.558848750815275,
+        "median_wt": 0.726834675187318,
+        "delta_median": -0.16798592437204307,
+        "p_one_sided": 0.9999999987199905
+      },
+      {
+        "cohort": "KICH",
+        "n_mut": 5,
+        "n_wt": 4,
+        "median_mut": 0.642091589169416,
+        "median_wt": 0.7468845369201805,
+        "delta_median": -0.10479294775076453,
+        "p_one_sided": 0.7936507936507936
+      },
+      {
+        "cohort": "KIRP",
+        "n_mut": 2,
+        "n_wt": 64,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "LGG",
+        "n_mut": 136,
+        "n_wt": 108,
+        "median_mut": 0.7073338632285671,
+        "median_wt": 0.7878448244626031,
+        "delta_median": -0.080510961234036,
+        "p_one_sided": 0.999987236548604
+      },
+      {
+        "cohort": "LUAD",
+        "n_mut": 222,
+        "n_wt": 170,
+        "median_mut": 0.497653354310281,
+        "median_wt": 0.659877762028516,
+        "delta_median": -0.162224407718235,
+        "p_one_sided": 0.9999999998343175
+      },
+      {
+        "cohort": "LUSC",
+        "n_mut": 369,
+        "n_wt": 73,
+        "median_mut": 0.495972360151992,
+        "median_wt": 0.544926020079978,
+        "delta_median": -0.04895365992798606,
+        "p_one_sided": 0.9902156780344865
+      },
+      {
+        "cohort": "MESO",
+        "n_mut": 6,
+        "n_wt": 52,
+        "median_mut": 0.6235855790636105,
+        "median_wt": 0.621934379980527,
+        "delta_median": 0.0016511990830834211,
+        "p_one_sided": 0.49503658497597475
+      },
+      {
+        "cohort": "PAAD",
+        "n_mut": 77,
+        "n_wt": 36,
+        "median_mut": 0.62452156119842,
+        "median_wt": 0.7061974298419336,
+        "delta_median": -0.08167586864351362,
+        "p_one_sided": 0.9988213686289042
+      },
+      {
+        "cohort": "PCPG",
+        "n_mut": 0,
+        "n_wt": 83,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "READ",
+        "n_mut": 66,
+        "n_wt": 14,
+        "median_mut": 0.723674864063182,
+        "median_wt": 0.7174920522850801,
+        "delta_median": 0.006182811778101982,
+        "p_one_sided": 0.44711487773663117
+      },
+      {
+        "cohort": "STAD",
+        "n_mut": 158,
+        "n_wt": 154,
+        "median_mut": 0.36261060409691304,
+        "median_wt": 0.5536990059032949,
+        "delta_median": -0.19108840180638187,
+        "p_one_sided": 0.9999996676611421
+      },
+      {
+        "cohort": "THYM",
+        "n_mut": 2,
+        "n_wt": 35,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "UCS",
+        "n_mut": 47,
+        "n_wt": 8,
+        "median_mut": 0.235872785180537,
+        "median_wt": 0.538280285386884,
+        "delta_median": -0.302407500206347,
+        "p_one_sided": 0.962497644584215
+      },
+      {
+        "cohort": "UVM",
+        "n_mut": 0,
+        "n_wt": 24,
+        "skipped": "n<3 in one group"
+      }
+    ],
+    "pred_CX3": [
+      {
+        "cohort": "BRCA",
+        "n_mut": 263,
+        "n_wt": 437,
+        "median_mut": 0.1496563255786895,
+        "median_wt": 0.1471724063158035,
+        "delta_median": 0.002483919262885992,
+        "p_one_sided": 0.0035155999418508667
+      },
+      {
+        "cohort": "CESC",
+        "n_mut": 16,
+        "n_wt": 204,
+        "median_mut": 0.15508265793323514,
+        "median_wt": 0.1527857407927513,
+        "delta_median": 0.0022969171404838284,
+        "p_one_sided": 0.12714513433008062
+      },
+      {
+        "cohort": "CHOL",
+        "n_mut": 3,
+        "n_wt": 29,
+        "median_mut": 0.1420107185840606,
+        "median_wt": 0.141046941280365,
+        "delta_median": 0.0009637773036956232,
+        "p_one_sided": 0.49999999999999994
+      },
+      {
+        "cohort": "COAD",
+        "n_mut": 153,
+        "n_wt": 48,
+        "median_mut": 0.1462682038545608,
+        "median_wt": 0.14684471487998954,
+        "delta_median": -0.0005765110254287442,
+        "p_one_sided": 0.691160976262551
+      },
+      {
+        "cohort": "DLBC",
+        "n_mut": 5,
+        "n_wt": 26,
+        "median_mut": 0.1572589874267578,
+        "median_wt": 0.15379980951547614,
+        "delta_median": 0.003459177911281669,
+        "p_one_sided": 0.31014472282547917
+      },
+      {
+        "cohort": "ESCA",
+        "n_mut": 117,
+        "n_wt": 16,
+        "median_mut": 0.1572371423244476,
+        "median_wt": 0.15635253489017487,
+        "delta_median": 0.0008846074342727384,
+        "p_one_sided": 0.09382047174532704
+      },
+      {
+        "cohort": "GBM",
+        "n_mut": 55,
+        "n_wt": 210,
+        "median_mut": 0.1370981782674789,
+        "median_wt": 0.13311770558357236,
+        "delta_median": 0.003980472683906527,
+        "p_one_sided": 0.15745750187286212
+      },
+      {
+        "cohort": "HNSC",
+        "n_mut": 277,
+        "n_wt": 81,
+        "median_mut": 0.1456383019685745,
+        "median_wt": 0.1477294117212295,
+        "delta_median": -0.0020911097526550015,
+        "p_one_sided": 0.8154967856242333
+      },
+      {
+        "cohort": "KICH",
+        "n_mut": 5,
+        "n_wt": 4,
+        "median_mut": 0.1541617065668106,
+        "median_wt": 0.14502805471420283,
+        "delta_median": 0.009133651852607783,
+        "p_one_sided": 0.45238095238095244
+      },
+      {
+        "cohort": "KIRP",
+        "n_mut": 2,
+        "n_wt": 64,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "LGG",
+        "n_mut": 136,
+        "n_wt": 108,
+        "median_mut": 0.14085732400417325,
+        "median_wt": 0.13528861105442044,
+        "delta_median": 0.005568712949752808,
+        "p_one_sided": 0.008953201550606573
+      },
+      {
+        "cohort": "LUAD",
+        "n_mut": 222,
+        "n_wt": 170,
+        "median_mut": 0.14846648275852198,
+        "median_wt": 0.15261333435773844,
+        "delta_median": -0.004146851599216461,
+        "p_one_sided": 0.9954946977779723
+      },
+      {
+        "cohort": "LUSC",
+        "n_mut": 369,
+        "n_wt": 73,
+        "median_mut": 0.1488071829080581,
+        "median_wt": 0.1461112052202224,
+        "delta_median": 0.002695977687835721,
+        "p_one_sided": 0.04554102543644902
+      },
+      {
+        "cohort": "MESO",
+        "n_mut": 6,
+        "n_wt": 52,
+        "median_mut": 0.15214034914970392,
+        "median_wt": 0.14860172569751734,
+        "delta_median": 0.0035386234521865845,
+        "p_one_sided": 0.2081039530274198
+      },
+      {
+        "cohort": "PAAD",
+        "n_mut": 77,
+        "n_wt": 36,
+        "median_mut": 0.1467561274766922,
+        "median_wt": 0.14640369266271586,
+        "delta_median": 0.00035243481397634335,
+        "p_one_sided": 0.334224143400638
+      },
+      {
+        "cohort": "PCPG",
+        "n_mut": 0,
+        "n_wt": 83,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "READ",
+        "n_mut": 66,
+        "n_wt": 14,
+        "median_mut": 0.1447700560092926,
+        "median_wt": 0.1475165411829948,
+        "delta_median": -0.0027464851737021845,
+        "p_one_sided": 0.7134431505693746
+      },
+      {
+        "cohort": "STAD",
+        "n_mut": 158,
+        "n_wt": 154,
+        "median_mut": 0.14920222014188766,
+        "median_wt": 0.1494828313589096,
+        "delta_median": -0.00028061121702194214,
+        "p_one_sided": 0.7251219647241296
+      },
+      {
+        "cohort": "THYM",
+        "n_mut": 2,
+        "n_wt": 35,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "UCS",
+        "n_mut": 47,
+        "n_wt": 8,
+        "median_mut": 0.1516228020191192,
+        "median_wt": 0.1577511131763458,
+        "delta_median": -0.00612831115722659,
+        "p_one_sided": 0.8583686318203522
+      },
+      {
+        "cohort": "UVM",
+        "n_mut": 0,
+        "n_wt": 24,
+        "skipped": "n<3 in one group"
+      }
+    ],
+    "true_CX3": [
+      {
+        "cohort": "BRCA",
+        "n_mut": 263,
+        "n_wt": 437,
+        "median_mut": 0.193605147717657,
+        "median_wt": 0.0412337050587925,
+        "delta_median": 0.1523714426588645,
+        "p_one_sided": 3.5760096215856354e-24
+      },
+      {
+        "cohort": "CESC",
+        "n_mut": 16,
+        "n_wt": 204,
+        "median_mut": 0.1892549457482235,
+        "median_wt": 0.1568164009679465,
+        "delta_median": 0.032438544780276996,
+        "p_one_sided": 0.17041626018468486
+      },
+      {
+        "cohort": "CHOL",
+        "n_mut": 3,
+        "n_wt": 29,
+        "median_mut": 0.180144436441496,
+        "median_wt": 0.16910937179054,
+        "delta_median": 0.011035064650955995,
+        "p_one_sided": 0.49999999999999994
+      },
+      {
+        "cohort": "COAD",
+        "n_mut": 153,
+        "n_wt": 48,
+        "median_mut": 0.0854606486877402,
+        "median_wt": 0.07731110039618005,
+        "delta_median": 0.008149548291560144,
+        "p_one_sided": 0.2521425246122014
+      },
+      {
+        "cohort": "DLBC",
+        "n_mut": 5,
+        "n_wt": 26,
+        "median_mut": 0.164871230497183,
+        "median_wt": 0.13028749319348198,
+        "delta_median": 0.03458373730370101,
+        "p_one_sided": 0.6263812928242569
+      },
+      {
+        "cohort": "ESCA",
+        "n_mut": 117,
+        "n_wt": 16,
+        "median_mut": 0.238754451854172,
+        "median_wt": 0.1959224375033915,
+        "delta_median": 0.04283201435078049,
+        "p_one_sided": 0.021891764468354453
+      },
+      {
+        "cohort": "GBM",
+        "n_mut": 55,
+        "n_wt": 210,
+        "median_mut": 0.0684313857119138,
+        "median_wt": 0.03229667340144065,
+        "delta_median": 0.036134712310473154,
+        "p_one_sided": 0.20325912570435944
+      },
+      {
+        "cohort": "HNSC",
+        "n_mut": 277,
+        "n_wt": 81,
+        "median_mut": 0.195304114399253,
+        "median_wt": 0.108571973769532,
+        "delta_median": 0.086732140629721,
+        "p_one_sided": 7.443673384667747e-05
+      },
+      {
+        "cohort": "KICH",
+        "n_mut": 5,
+        "n_wt": 4,
+        "median_mut": 0.0,
+        "median_wt": 0.0,
+        "delta_median": 0.0,
+        "p_one_sided": 0.28025454571925723
+      },
+      {
+        "cohort": "KIRP",
+        "n_mut": 2,
+        "n_wt": 64,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "LGG",
+        "n_mut": 136,
+        "n_wt": 108,
+        "median_mut": 0.0622228046960128,
+        "median_wt": 0.02212982050845805,
+        "delta_median": 0.04009298418755475,
+        "p_one_sided": 0.0008543319304104198
+      },
+      {
+        "cohort": "LUAD",
+        "n_mut": 222,
+        "n_wt": 170,
+        "median_mut": 0.188809600763845,
+        "median_wt": 0.11572113166119649,
+        "delta_median": 0.07308846910264852,
+        "p_one_sided": 1.8434565205111842e-07
+      },
+      {
+        "cohort": "LUSC",
+        "n_mut": 369,
+        "n_wt": 73,
+        "median_mut": 0.22895561325719,
+        "median_wt": 0.191478004654979,
+        "delta_median": 0.037477608602211,
+        "p_one_sided": 0.0035106520117199596
+      },
+      {
+        "cohort": "MESO",
+        "n_mut": 6,
+        "n_wt": 52,
+        "median_mut": 0.124820900670318,
+        "median_wt": 0.160004393892101,
+        "delta_median": -0.035183493221783005,
+        "p_one_sided": 0.7918960469725802
+      },
+      {
+        "cohort": "PAAD",
+        "n_mut": 77,
+        "n_wt": 36,
+        "median_mut": 0.136533727222052,
+        "median_wt": 0.1426094104502485,
+        "delta_median": -0.006075683228196488,
+        "p_one_sided": 0.42162399627573427
+      },
+      {
+        "cohort": "PCPG",
+        "n_mut": 0,
+        "n_wt": 83,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "READ",
+        "n_mut": 66,
+        "n_wt": 14,
+        "median_mut": 0.06451491411854465,
+        "median_wt": 0.08913848090465079,
+        "delta_median": -0.024623566786106138,
+        "p_one_sided": 0.700658708280944
+      },
+      {
+        "cohort": "STAD",
+        "n_mut": 158,
+        "n_wt": 154,
+        "median_mut": 0.2228835695618065,
+        "median_wt": 0.1708979571020545,
+        "delta_median": 0.051985612459752,
+        "p_one_sided": 0.0016781455450367044
+      },
+      {
+        "cohort": "THYM",
+        "n_mut": 2,
+        "n_wt": 35,
+        "skipped": "n<3 in one group"
+      },
+      {
+        "cohort": "UCS",
+        "n_mut": 47,
+        "n_wt": 8,
+        "median_mut": 0.255948150596649,
+        "median_wt": 0.151302130771735,
+        "delta_median": 0.104646019824914,
+        "p_one_sided": 0.0012227990696359178
+      },
+      {
+        "cohort": "UVM",
+        "n_mut": 0,
+        "n_wt": 24,
+        "skipped": "n<3 in one group"
+      }
+    ]
+  },
+  "summary": {
+    "pred_CX1": {
+      "n_mut": 1979,
+      "n_wt": 1876,
+      "median_mut": 0.5694930553436279,
+      "median_wt": 0.5701688230037689,
+      "p_one_sided_pan_cohort": 0.963446387318209
+    },
+    "true_CX1": {
+      "n_mut": 1979,
+      "n_wt": 1876,
+      "median_mut": 0.519299899631224,
+      "median_wt": 0.6951013011082375,
+      "p_one_sided_pan_cohort": 1.0
+    },
+    "pred_CX3": {
+      "n_mut": 1979,
+      "n_wt": 1876,
+      "median_mut": 0.1479561328887939,
+      "median_wt": 0.1477131843566894,
+      "p_one_sided_pan_cohort": 0.08010808471221298
+    },
+    "true_CX3": {
+      "n_mut": 1979,
+      "n_wt": 1876,
+      "median_mut": 0.180874455364687,
+      "median_wt": 0.0860469820208633,
+      "p_one_sided_pan_cohort": 2.4078702810737487e-70
+    }
+  }
+}

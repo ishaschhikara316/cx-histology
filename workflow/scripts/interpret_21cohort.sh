@@ -4,15 +4,24 @@
 #   - prototype_tiles:   highest-attention tiles per signature
 #   - nuclear_features:  morphological features in attended regions
 
-set -u
 ROOT="/root/ISHA/cx-histology"
 cd "$ROOT"
+
+# Activate conda env (cx-histology) and force its libstdc++ ahead of system.
+# set -u must come AFTER `conda activate`.
+source /root/miniconda3/etc/profile.d/conda.sh
+conda activate cx-histology
+export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
+set -u
+
 export PYTHONPATH="$PWD:${PYTHONPATH:-}"
 export OMP_NUM_THREADS=4 MKL_NUM_THREADS=4
 mkdir -p logs figures/interpret_21cohort
 
 LOG="logs/interpret_21cohort.log"
-log() { echo "[$(date -Iseconds)] $*" | tee -a "$LOG"; }
+# log() writes to stderr (not stdout) so callers capturing $(run_interp ...)
+# get only the PID, not the log line.
+log() { echo "[$(date -Iseconds)] $*" | tee -a "$LOG" >&2; }
 
 CKPT="results/cv/uni_21cohort_final/fold0.pt"
 [ ! -f "$CKPT" ] && { log "no $CKPT; skipping interpretability"; exit 1; }

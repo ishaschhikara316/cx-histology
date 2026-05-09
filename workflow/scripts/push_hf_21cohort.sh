@@ -2,9 +2,14 @@
 # Build cx-uni-abmil-21cohort HF repo from the just-finished 21-cohort retrain
 # and push to huggingface.co/IshaChhikara/cx-uni-abmil-21cohort.
 
-set -u
 ROOT="/root/ISHA/cx-histology"
 cd "$ROOT"
+
+# Activate conda env (cx-histology) and force its libstdc++ ahead of system.
+source /root/miniconda3/etc/profile.d/conda.sh
+conda activate cx-histology
+export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
+set -u
 
 STAGE=/tmp/hf_repos/cx-uni-abmil-21cohort
 mkdir -p "$STAGE"
