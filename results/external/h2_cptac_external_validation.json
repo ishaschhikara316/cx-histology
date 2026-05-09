@@ -1,0 +1,180 @@
+{
+  "n_paired_patients": 283,
+  "threshold": 0.15,
+  "n_active_signatures": 14,
+  "n_passing_h2": 14,
+  "h2_overall_pass": true,
+  "per_signature": [
+    {
+      "signature": "CX1",
+      "n": 283,
+      "rho_cptac": 0.055967940565731046,
+      "rho_tcga": 0.13698672507269544,
+      "delta_rho": 0.0810187845069644,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX2",
+      "n": 283,
+      "rho_cptac": 0.01280629802703385,
+      "rho_tcga": 0.052806908480776446,
+      "delta_rho": 0.0400006104537426,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX3",
+      "n": 283,
+      "rho_cptac": 0.10205068064027818,
+      "rho_tcga": 0.11434942416825876,
+      "delta_rho": 0.012298743527980577,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX4",
+      "n": 283,
+      "rho_cptac": -0.014109802090218927,
+      "rho_tcga": 0.060073404690656425,
+      "delta_rho": 0.07418320678087535,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX5",
+      "n": 283,
+      "rho_cptac": 0.02136510802438852,
+      "rho_tcga": 0.1468357680783354,
+      "delta_rho": 0.1254706600539469,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX6",
+      "n": 283,
+      "rho_cptac": 0.057765543785455016,
+      "rho_tcga": 0.05562846812739545,
+      "delta_rho": 0.0021370756580595673,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX7",
+      "n": 283,
+      "rho_cptac": NaN,
+      "rho_tcga": NaN,
+      "delta_rho": NaN,
+      "passes_h2": false,
+      "tcga_status": "inactive",
+      "note": "insufficient variance or n<30"
+    },
+    {
+      "signature": "CX8",
+      "n": 283,
+      "rho_cptac": 0.06843463734646713,
+      "rho_tcga": 0.09572518408245696,
+      "delta_rho": 0.027290546735989837,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX9",
+      "n": 283,
+      "rho_cptac": 0.0095489299741272,
+      "rho_tcga": 0.026222050248016573,
+      "delta_rho": 0.016673120273889373,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX10",
+      "n": 283,
+      "rho_cptac": -0.013675143549046217,
+      "rho_tcga": 0.1006350280454702,
+      "delta_rho": 0.11431017159451641,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX11",
+      "n": 283,
+      "rho_cptac": -0.019000553715753724,
+      "rho_tcga": 0.06918035535783501,
+      "delta_rho": 0.08818090907358873,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX12",
+      "n": 283,
+      "rho_cptac": 0.06190078510651819,
+      "rho_tcga": 0.13048999700223674,
+      "delta_rho": 0.06858921189571854,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX13",
+      "n": 283,
+      "rho_cptac": -0.09682181181467235,
+      "rho_tcga": 0.016680019712882358,
+      "delta_rho": 0.1135018315275547,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX14",
+      "n": 283,
+      "rho_cptac": -0.048208622383282856,
+      "rho_tcga": NaN,
+      "delta_rho": NaN,
+      "passes_h2": false,
+      "tcga_status": "inactive",
+      "note": ""
+    },
+    {
+      "signature": "CX15",
+      "n": 283,
+      "rho_cptac": NaN,
+      "rho_tcga": NaN,
+      "delta_rho": NaN,
+      "passes_h2": false,
+      "tcga_status": "inactive",
+      "note": "insufficient variance or n<30"
+    },
+    {
+      "signature": "CX16",
+      "n": 283,
+      "rho_cptac": 0.17600867575204046,
+      "rho_tcga": 0.07805539054911308,
+      "delta_rho": 0.09795328520292738,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    },
+    {
+      "signature": "CX17",
+      "n": 283,
+      "rho_cptac": 0.13331459432509032,
+      "rho_tcga": 0.043759088130925744,
+      "delta_rho": 0.08955550619416458,
+      "passes_h2": true,
+      "tcga_status": "active",
+      "note": ""
+    }
+  ],
+  "method": "Spearman rho on per-patient mean prediction vs CINSignatureQuantification label, threshold |delta_rho| <= 0.15"
+}

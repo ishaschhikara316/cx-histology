@@ -22,6 +22,13 @@ results/
 !results/cx_label_atlas.json
 !results/
 
+# CPTAC external validation: predictions, recomputed labels, H2 summary.
+# Upstream GDC seg files at data/labels/cptac_pdc/ are intentionally not
+# committed (16 MB, regenerable via workflow/scripts/fetch_cptac_gdc_seg.py).
+!results/external/**/*.tsv
+!results/external/**/*.json
+!data/labels/cx_activities_cptac.tsv
+
 # Tokens and secrets
 .gdc_token
 .hf_token
